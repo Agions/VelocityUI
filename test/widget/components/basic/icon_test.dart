@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:velocity_ui/src/components/basic/icon/icon.dart';
+import 'package:velocity_ui/src/core/types/component_size.dart';
 
 void main() {
   group('VelocityIcon Tests', () {
@@ -15,14 +16,33 @@ void main() {
       expect(find.byType(Icon), findsOneWidget);
     });
 
-    testWidgets('handles different enum sizes', (WidgetTester tester) async {
+    testWidgets('handles different unified sizes', (WidgetTester tester) async {
       await tester.pumpWidget(
         const MaterialApp(
           home: Column(
             children: [
-              VelocityIcon(Icons.home, size: VelocityIconSize.xs),
-              VelocityIcon(Icons.star, size: VelocityIconSize.md),
-              VelocityIcon(Icons.settings, size: VelocityIconSize.xl),
+              VelocityIcon(Icons.home, size: VelocitySize.small),
+              VelocityIcon(Icons.star, size: VelocitySize.medium),
+              VelocityIcon(Icons.settings, size: VelocitySize.large),
+            ],
+          ),
+        ),
+      );
+
+      expect(find.byType(VelocityIcon), findsNWidgets(3));
+    });
+
+    testWidgets('handles extended sizes', (WidgetTester tester) async {
+      await tester.pumpWidget(
+        const MaterialApp(
+          home: Column(
+            children: [
+              VelocityIcon.extended(Icons.home,
+                  extendedSize: VelocityExtendedSize.xs),
+              VelocityIcon.extended(Icons.star,
+                  extendedSize: VelocityExtendedSize.medium),
+              VelocityIcon.extended(Icons.settings,
+                  extendedSize: VelocityExtendedSize.xl),
             ],
           ),
         ),

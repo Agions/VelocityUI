@@ -2,6 +2,7 @@
 library velocity_notification;
 
 import 'package:flutter/material.dart';
+import '../../../core/utils/velocity_repaint_boundary.dart';
 import 'notification_style.dart';
 
 export 'notification_style.dart';
@@ -26,6 +27,7 @@ class VelocityNotification {
     VoidCallback? onTap,
     bool showClose = true,
     VelocityNotificationStyle? style,
+    bool useRepaintBoundary = true,
   }) {
     dismiss();
     final effectiveStyle = style ?? const VelocityNotificationStyle();
@@ -42,6 +44,7 @@ class VelocityNotification {
         showClose: showClose,
         style: effectiveStyle,
         onDismiss: dismiss,
+        useRepaintBoundary: useRepaintBoundary,
       ),
     );
 
@@ -57,8 +60,15 @@ class VelocityNotification {
 class _VelocityNotificationWidget extends StatefulWidget {
   const _VelocityNotificationWidget({
     required this.title,
-    required this.type, required this.position, required this.duration, required this.showClose, required this.style, required this.onDismiss, this.message,
+    required this.type,
+    required this.position,
+    required this.duration,
+    required this.showClose,
+    required this.style,
+    required this.onDismiss,
+    this.message,
     this.onTap,
+    this.useRepaintBoundary = true,
   });
 
   final String title;
@@ -71,6 +81,12 @@ class _VelocityNotificationWidget extends StatefulWidget {
   final VelocityNotificationStyle style;
   final VoidCallback onDismiss;
 
+  /// 是否使用 RepaintBoundary 包装
+  ///
+  /// 默认为 true，用于隔离动画重绘区域，提升渲染性能。
+  /// 设置为 false 可禁用 RepaintBoundary。
+  final bool useRepaintBoundary;
+
   @override
   State<_VelocityNotificationWidget> createState() =>
       _VelocityNotificationWidgetState();
@@ -78,7 +94,12 @@ class _VelocityNotificationWidget extends StatefulWidget {
 
 class _VelocityNotificationWidgetState
     extends State<_VelocityNotificationWidget>
-    with SingleTickerProviderStateMixin {
+    with
+        SingleTickerProviderStateMixin,
+        VelocityAnimatedMixin<_VelocityNotificationWidget> {
+  @override
+  bool get useRepaintBoundary => widget.useRepaintBoundary;
+
   late AnimationController _controller;
   late Animation<Offset> _slideAnimation;
 
@@ -135,7 +156,7 @@ class _VelocityNotificationWidgetState
 
   @override
   Widget build(BuildContext context) {
-    return Positioned(
+    final content = Positioned(
       top: widget.position == VelocityNotificationPosition.top
           ? MediaQuery.of(context).padding.top + 16
           : null,
@@ -193,5 +214,7 @@ class _VelocityNotificationWidgetState
         ),
       ),
     );
+
+    return wrapWithRepaintBoundary(content);
   }
 }

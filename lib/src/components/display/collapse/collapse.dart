@@ -2,18 +2,25 @@
 library velocity_collapse;
 
 import 'package:flutter/material.dart';
+import '../../../core/utils/velocity_repaint_boundary.dart';
 import 'collapse_style.dart';
 
 export 'collapse_style.dart';
 
 /// VelocityUI 折叠面板
+///
+/// 支持展开/折叠动画的面板组件。
+/// 默认使用 RepaintBoundary 包装以优化渲染性能。
 class VelocityCollapse extends StatefulWidget {
   const VelocityCollapse({
-    required this.title, required this.child, super.key,
+    required this.title,
+    required this.child,
+    super.key,
     this.leading,
     this.initiallyExpanded = false,
     this.onChanged,
     this.style,
+    this.useRepaintBoundary = true,
   });
 
   final Widget title;
@@ -23,12 +30,23 @@ class VelocityCollapse extends StatefulWidget {
   final ValueChanged<bool>? onChanged;
   final VelocityCollapseStyle? style;
 
+  /// 是否使用 RepaintBoundary 包装
+  ///
+  /// 默认为 true，用于隔离动画重绘区域，提升渲染性能。
+  /// 设置为 false 可禁用 RepaintBoundary。
+  final bool useRepaintBoundary;
+
   @override
   State<VelocityCollapse> createState() => _VelocityCollapseState();
 }
 
 class _VelocityCollapseState extends State<VelocityCollapse>
-    with SingleTickerProviderStateMixin {
+    with
+        SingleTickerProviderStateMixin,
+        VelocityAnimatedMixin<VelocityCollapse> {
+  @override
+  bool get useRepaintBoundary => widget.useRepaintBoundary;
+
   late bool _isExpanded;
   late AnimationController _controller;
   late Animation<double> _animation;
@@ -61,7 +79,7 @@ class _VelocityCollapseState extends State<VelocityCollapse>
   Widget build(BuildContext context) {
     final effectiveStyle = widget.style ?? const VelocityCollapseStyle();
 
-    return Container(
+    final content = Container(
       decoration: BoxDecoration(
           color: effectiveStyle.backgroundColor,
           borderRadius: effectiveStyle.borderRadius,
@@ -100,13 +118,16 @@ class _VelocityCollapseState extends State<VelocityCollapse>
         ],
       ),
     );
+
+    return wrapWithRepaintBoundary(content);
   }
 }
 
 /// VelocityUI 手风琴组件
 class VelocityAccordion extends StatefulWidget {
   const VelocityAccordion({
-    required this.items, super.key,
+    required this.items,
+    super.key,
     this.allowMultiple = false,
     this.style,
   });

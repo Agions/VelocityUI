@@ -139,6 +139,46 @@ class VelocityColorScheme {
   final Color shadow;
   final Brightness brightness;
 
+  @override
+  bool operator ==(Object other) {
+    if (identical(this, other)) return true;
+    if (other is! VelocityColorScheme) return false;
+    return other.primary == primary &&
+        other.primaryContainer == primaryContainer &&
+        other.secondary == secondary &&
+        other.secondaryContainer == secondaryContainer &&
+        other.surface == surface &&
+        other.background == background &&
+        other.error == error &&
+        other.onPrimary == onPrimary &&
+        other.onSecondary == onSecondary &&
+        other.onSurface == onSurface &&
+        other.onBackground == onBackground &&
+        other.onError == onError &&
+        other.outline == outline &&
+        other.shadow == shadow &&
+        other.brightness == brightness;
+  }
+
+  @override
+  int get hashCode => Object.hash(
+        primary,
+        primaryContainer,
+        secondary,
+        secondaryContainer,
+        surface,
+        background,
+        error,
+        onPrimary,
+        onSecondary,
+        onSurface,
+        onBackground,
+        onError,
+        outline,
+        shadow,
+        brightness,
+      );
+
   /// 亮色方案
   static const VelocityColorScheme light = VelocityColorScheme(
     primary: VelocityColors.primary,

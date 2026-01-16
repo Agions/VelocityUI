@@ -2,11 +2,15 @@
 library velocity_skeleton;
 
 import 'package:flutter/material.dart';
+import '../../../core/utils/velocity_repaint_boundary.dart';
 import 'skeleton_style.dart';
 
 export 'skeleton_style.dart';
 
 /// VelocityUI 骨架屏
+///
+/// 支持动画加载效果的骨架屏组件。
+/// 默认使用 RepaintBoundary 包装以优化渲染性能。
 class VelocitySkeleton extends StatefulWidget {
   const VelocitySkeleton({
     super.key,
@@ -15,6 +19,7 @@ class VelocitySkeleton extends StatefulWidget {
     this.borderRadius,
     this.circle = false,
     this.style,
+    this.useRepaintBoundary = true,
   });
 
   final double? width;
@@ -23,12 +28,23 @@ class VelocitySkeleton extends StatefulWidget {
   final bool circle;
   final VelocitySkeletonStyle? style;
 
+  /// 是否使用 RepaintBoundary 包装
+  ///
+  /// 默认为 true，用于隔离动画重绘区域，提升渲染性能。
+  /// 设置为 false 可禁用 RepaintBoundary。
+  final bool useRepaintBoundary;
+
   @override
   State<VelocitySkeleton> createState() => _VelocitySkeletonState();
 }
 
 class _VelocitySkeletonState extends State<VelocitySkeleton>
-    with SingleTickerProviderStateMixin {
+    with
+        SingleTickerProviderStateMixin,
+        VelocityAnimatedMixin<VelocitySkeleton> {
+  @override
+  bool get useRepaintBoundary => widget.useRepaintBoundary;
+
   late AnimationController _controller;
   late Animation<double> _animation;
 
@@ -53,7 +69,7 @@ class _VelocitySkeletonState extends State<VelocitySkeleton>
     final effectiveStyle = widget.style ?? const VelocitySkeletonStyle();
     final size = widget.circle ? widget.height : null;
 
-    return AnimatedBuilder(
+    final content = AnimatedBuilder(
       animation: _animation,
       builder: (context, child) {
         return Container(
@@ -77,13 +93,18 @@ class _VelocitySkeletonState extends State<VelocitySkeleton>
         );
       },
     );
+
+    return wrapWithRepaintBoundary(content);
   }
 }
 
 /// VelocityUI 骨架屏容器
 class VelocitySkeletonContainer extends StatelessWidget {
   const VelocitySkeletonContainer({
-    required this.loading, required this.skeleton, required this.child, super.key,
+    required this.loading,
+    required this.skeleton,
+    required this.child,
+    super.key,
   });
 
   final bool loading;

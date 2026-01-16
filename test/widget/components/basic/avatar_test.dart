@@ -2,6 +2,7 @@ import 'dart:ui' as ui;
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:velocity_ui/src/components/display/avatar/avatar.dart';
+import 'package:velocity_ui/src/core/types/component_size.dart';
 
 // Test image provider that doesn't require network calls
 class TestImageProvider extends ImageProvider<TestImageProvider> {
@@ -77,8 +78,6 @@ void main() {
       );
 
       expect(find.byType(VelocityAvatar), findsOneWidget);
-      // Image组件会在网络请求过程中显示fallback，所以这里可能找不到Image组件
-      // 但应该能找到VelocityAvatar
     });
 
     testWidgets('renders avatar with name', (WidgetTester tester) async {
@@ -95,7 +94,7 @@ void main() {
 
       expect(find.byType(VelocityAvatar), findsOneWidget);
       expect(find.byType(Text), findsOneWidget);
-      expect(find.text('JD'), findsOneWidget); // First 2 characters, uppercase
+      expect(find.text('JD'), findsOneWidget);
     });
 
     testWidgets('renders avatar with single character name',
@@ -116,15 +115,13 @@ void main() {
       expect(find.text('A'), findsOneWidget);
     });
 
-    // 移除了不支持的工厂构造函数测试，因为VelocityAvatar只有一个主构造函数
-
-    testWidgets('handles custom size', (WidgetTester tester) async {
+    testWidgets('handles unified size enum', (WidgetTester tester) async {
       await tester.pumpWidget(
         MaterialApp(
           theme: theme,
           home: const Scaffold(
             body: VelocityAvatar(
-              size: VelocityAvatarSize.lg,
+              size: VelocitySize.large,
               icon: Icons.person,
             ),
           ),
@@ -135,7 +132,7 @@ void main() {
       expect(avatarFinder, findsOneWidget);
 
       final avatar = tester.widget<VelocityAvatar>(avatarFinder);
-      expect(avatar.size, equals(VelocityAvatarSize.lg));
+      expect(avatar.size, equals(VelocitySize.large));
     });
 
     testWidgets('handles circle shape', (WidgetTester tester) async {
@@ -200,14 +197,6 @@ void main() {
       expect(avatar.style?.backgroundColor, equals(Colors.blue));
     });
 
-    // 移除了不支持的custom foregroundColor测试，因为实际使用style参数
-
-    // 移除了不支持的custom border测试，因为实际使用style参数
-
-    // 移除了不支持的custom elevation测试，因为实际使用style参数
-
-    // 移除了不支持的custom shadowColor测试，因为实际使用style参数
-
     testWidgets('handles onTap callback', (WidgetTester tester) async {
       var tapped = false;
 
@@ -233,7 +222,7 @@ void main() {
       expect(tapped, isTrue);
     });
 
-    testWidgets('renders different sizes correctly',
+    testWidgets('renders different unified sizes correctly',
         (WidgetTester tester) async {
       await tester.pumpWidget(
         MaterialApp(
@@ -242,23 +231,53 @@ void main() {
             body: Column(
               children: [
                 VelocityAvatar(
-                  size: VelocityAvatarSize.xs,
+                  size: VelocitySize.small,
                   icon: Icons.person,
                 ),
                 VelocityAvatar(
-                  size: VelocityAvatarSize.sm,
+                  size: VelocitySize.medium,
                   icon: Icons.person,
                 ),
                 VelocityAvatar(
-                  size: VelocityAvatarSize.md,
+                  size: VelocitySize.large,
                   icon: Icons.person,
                 ),
-                VelocityAvatar(
-                  size: VelocityAvatarSize.lg,
+              ],
+            ),
+          ),
+        ),
+      );
+
+      expect(find.byType(VelocityAvatar), findsNWidgets(3));
+      expect(find.byIcon(Icons.person), findsNWidgets(3));
+    });
+
+    testWidgets('renders extended sizes correctly',
+        (WidgetTester tester) async {
+      await tester.pumpWidget(
+        MaterialApp(
+          theme: theme,
+          home: const Scaffold(
+            body: Column(
+              children: [
+                VelocityAvatar.extended(
+                  extendedSize: VelocityExtendedSize.xs,
                   icon: Icons.person,
                 ),
-                VelocityAvatar(
-                  size: VelocityAvatarSize.xl,
+                VelocityAvatar.extended(
+                  extendedSize: VelocityExtendedSize.small,
+                  icon: Icons.person,
+                ),
+                VelocityAvatar.extended(
+                  extendedSize: VelocityExtendedSize.medium,
+                  icon: Icons.person,
+                ),
+                VelocityAvatar.extended(
+                  extendedSize: VelocityExtendedSize.large,
+                  icon: Icons.person,
+                ),
+                VelocityAvatar.extended(
+                  extendedSize: VelocityExtendedSize.xl,
                   icon: Icons.person,
                 ),
               ],
@@ -283,8 +302,7 @@ void main() {
       );
 
       expect(find.byType(VelocityAvatar), findsOneWidget);
-      expect(find.byType(Icon),
-          findsOneWidget); // Empty avatar should show default icon
+      expect(find.byType(Icon), findsOneWidget);
     });
 
     testWidgets('handles text avatar with different colors',
@@ -316,7 +334,7 @@ void main() {
           home: Scaffold(
             body: VelocityAvatar(
               imageUrl: 'https://example.com/avatar.jpg',
-              size: VelocityAvatarSize.lg,
+              size: VelocitySize.large,
               shape: VelocityAvatarShape.square,
               style: VelocityAvatarStyle(
                 border: Border.all(color: Colors.green, width: 3.0),
@@ -335,13 +353,13 @@ void main() {
         MaterialApp(
           theme: theme,
           home: Scaffold(
-            body: VelocityAvatar(
+            body: VelocityAvatar.extended(
               icon: Icons.favorite,
               style: const VelocityAvatarStyle(
                 backgroundColor: Colors.pink,
                 foregroundColor: Colors.white,
               ),
-              size: VelocityAvatarSize.xl,
+              extendedSize: VelocityExtendedSize.xl,
               shape: VelocityAvatarShape.circle,
               onTap: () {},
             ),
@@ -367,7 +385,6 @@ void main() {
       );
 
       expect(find.byType(VelocityAvatar), findsOneWidget);
-      // Avatar should be tappable for accessibility
       expect(find.byType(GestureDetector), findsOneWidget);
     });
 
@@ -385,7 +402,7 @@ void main() {
       );
 
       expect(find.byType(VelocityAvatar), findsOneWidget);
-      expect(find.text('VL'), findsOneWidget); // First 2 characters only
+      expect(find.text('VL'), findsOneWidget);
     });
 
     testWidgets('handles interactive states correctly',
@@ -406,7 +423,6 @@ void main() {
         ),
       );
 
-      // Test multiple taps
       await tester.tap(find.byType(VelocityAvatar));
       await tester.pump();
 
@@ -442,7 +458,6 @@ void main() {
 
     testWidgets('handles constructor assertion correctly',
         (WidgetTester tester) async {
-      // This should work (only icon provided)
       await tester.pumpWidget(
         MaterialApp(
           theme: theme,
@@ -455,7 +470,6 @@ void main() {
       );
       expect(find.byType(VelocityAvatar), findsOneWidget);
 
-      // This should work (only image provided)
       await tester.pumpWidget(
         MaterialApp(
           theme: theme,
@@ -468,7 +482,6 @@ void main() {
       );
       expect(find.byType(VelocityAvatar), findsOneWidget);
 
-      // This should work (only text provided)
       await tester.pumpWidget(
         MaterialApp(
           theme: theme,
@@ -481,7 +494,6 @@ void main() {
       );
       expect(find.byType(VelocityAvatar), findsOneWidget);
 
-      // This should work (none provided)
       await tester.pumpWidget(
         MaterialApp(
           theme: theme,

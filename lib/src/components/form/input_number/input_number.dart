@@ -3,6 +3,7 @@ library velocity_input_number;
 
 import 'package:flutter/material.dart';
 import 'input_number_style.dart';
+import '../../../core/theme/velocity_colors.dart';
 
 export 'input_number_style.dart';
 
@@ -109,8 +110,10 @@ class VelocityInputNumber extends StatefulWidget {
 enum VelocityInputNumberButtonPlacement {
   /// 垂直排列
   vertical,
+
   /// 水平排列
   horizontal,
+
   /// 内外排列
   inside,
 }
@@ -119,6 +122,14 @@ class _VelocityInputNumberState extends State<VelocityInputNumber> {
   late TextEditingController _controller;
   late FocusNode _focusNode;
   late num _currentValue;
+
+  // Default values for nullable style properties
+  static const Color _defaultBorderColor = VelocityColors.gray300;
+  static const Color _defaultFocusedBorderColor = VelocityColors.primary;
+  static const Color _defaultErrorBorderColor = VelocityColors.error;
+  static const Color _defaultDisabledBorderColor = VelocityColors.gray200;
+  static const BorderRadius _defaultBorderRadius =
+      BorderRadius.all(Radius.circular(8));
 
   @override
   void initState() {
@@ -181,44 +192,56 @@ class _VelocityInputNumberState extends State<VelocityInputNumber> {
       children: [
         if (widget.label != null) ...[
           Text(widget.label!, style: effectiveStyle.labelStyle),
-          SizedBox(height: effectiveStyle.labelSpacing),
+          SizedBox(height: effectiveStyle.labelSpacing ?? 6),
         ],
         widget.showButtons
             ? _buildWithButtons(effectiveStyle, hasError)
             : _buildWithoutButtons(effectiveStyle, hasError),
         if (widget.error != null && widget.error!.isNotEmpty) ...[
-          SizedBox(height: effectiveStyle.helperSpacing),
+          SizedBox(height: effectiveStyle.helperSpacing ?? 4),
           Text(widget.error!, style: effectiveStyle.errorStyle),
         ] else if (widget.helper != null && widget.helper!.isNotEmpty) ...[
-          SizedBox(height: effectiveStyle.helperSpacing),
+          SizedBox(height: effectiveStyle.helperSpacing ?? 4),
           Text(widget.helper!, style: effectiveStyle.helperStyle),
         ],
       ],
     );
   }
 
-  Widget _buildWithButtons(VelocityInputNumberStyle effectiveStyle, bool hasError) {
+  Widget _buildWithButtons(
+      VelocityInputNumberStyle effectiveStyle, bool hasError) {
+    final borderColor = effectiveStyle.borderColor ?? _defaultBorderColor;
+    final focusedBorderColor =
+        effectiveStyle.focusedBorderColor ?? _defaultFocusedBorderColor;
+    final errorBorderColor =
+        effectiveStyle.errorBorderColor ?? _defaultErrorBorderColor;
+    final borderRadius = effectiveStyle.borderRadius ?? _defaultBorderRadius;
+
     return Container(
       decoration: BoxDecoration(
         border: Border.all(
           color: hasError
-              ? effectiveStyle.errorBorderColor
+              ? errorBorderColor
               : _focusNode.hasFocus
-                  ? effectiveStyle.focusedBorderColor
-                  : effectiveStyle.borderColor,
+                  ? focusedBorderColor
+                  : borderColor,
           width: _focusNode.hasFocus ? 2 : 1,
         ),
-        borderRadius: effectiveStyle.borderRadius,
+        borderRadius: borderRadius,
       ),
-      child: widget.buttonPlacement == VelocityInputNumberButtonPlacement.vertical
-          ? _buildVerticalButtons(effectiveStyle)
-          : widget.buttonPlacement == VelocityInputNumberButtonPlacement.horizontal
-              ? _buildHorizontalButtons(effectiveStyle)
-              : _buildInsideButtons(effectiveStyle),
+      child:
+          widget.buttonPlacement == VelocityInputNumberButtonPlacement.vertical
+              ? _buildVerticalButtons(effectiveStyle)
+              : widget.buttonPlacement ==
+                      VelocityInputNumberButtonPlacement.horizontal
+                  ? _buildHorizontalButtons(effectiveStyle)
+                  : _buildInsideButtons(effectiveStyle),
     );
   }
 
   Widget _buildVerticalButtons(VelocityInputNumberStyle effectiveStyle) {
+    final borderColor = effectiveStyle.borderColor ?? _defaultBorderColor;
+
     return Row(
       children: [
         Expanded(
@@ -258,7 +281,7 @@ class _VelocityInputNumberState extends State<VelocityInputNumber> {
         Container(
           width: 40,
           decoration: BoxDecoration(
-            border: Border(left: BorderSide(color: effectiveStyle.borderColor)),
+            border: Border(left: BorderSide(color: borderColor)),
           ),
           child: Column(
             children: [
@@ -268,7 +291,7 @@ class _VelocityInputNumberState extends State<VelocityInputNumber> {
                   child: Container(
                     alignment: Alignment.center,
                     decoration: BoxDecoration(
-                      border: Border(bottom: BorderSide(color: effectiveStyle.borderColor)),
+                      border: Border(bottom: BorderSide(color: borderColor)),
                     ),
                     child: const Icon(
                       Icons.keyboard_arrow_up,
@@ -297,6 +320,8 @@ class _VelocityInputNumberState extends State<VelocityInputNumber> {
   }
 
   Widget _buildHorizontalButtons(VelocityInputNumberStyle effectiveStyle) {
+    final borderColor = effectiveStyle.borderColor ?? _defaultBorderColor;
+
     return Row(
       children: [
         InkWell(
@@ -306,7 +331,7 @@ class _VelocityInputNumberState extends State<VelocityInputNumber> {
             height: 48,
             alignment: Alignment.center,
             decoration: BoxDecoration(
-              border: Border(right: BorderSide(color: effectiveStyle.borderColor)),
+              border: Border(right: BorderSide(color: borderColor)),
             ),
             child: const Icon(
               Icons.remove,
@@ -355,7 +380,7 @@ class _VelocityInputNumberState extends State<VelocityInputNumber> {
             height: 48,
             alignment: Alignment.center,
             decoration: BoxDecoration(
-              border: Border(left: BorderSide(color: effectiveStyle.borderColor)),
+              border: Border(left: BorderSide(color: borderColor)),
             ),
             child: const Icon(
               Icons.add,
@@ -426,7 +451,17 @@ class _VelocityInputNumberState extends State<VelocityInputNumber> {
     );
   }
 
-  Widget _buildWithoutButtons(VelocityInputNumberStyle effectiveStyle, bool hasError) {
+  Widget _buildWithoutButtons(
+      VelocityInputNumberStyle effectiveStyle, bool hasError) {
+    final borderColor = effectiveStyle.borderColor ?? _defaultBorderColor;
+    final focusedBorderColor =
+        effectiveStyle.focusedBorderColor ?? _defaultFocusedBorderColor;
+    final errorBorderColor =
+        effectiveStyle.errorBorderColor ?? _defaultErrorBorderColor;
+    final disabledBorderColor =
+        effectiveStyle.disabledBorderColor ?? _defaultDisabledBorderColor;
+    final borderRadius = effectiveStyle.borderRadius ?? _defaultBorderRadius;
+
     return TextField(
       controller: _controller,
       focusNode: _focusNode,
@@ -451,40 +486,36 @@ class _VelocityInputNumberState extends State<VelocityInputNumber> {
             ? Icon(widget.suffixIcon, size: effectiveStyle.iconSize)
             : null,
         border: OutlineInputBorder(
-          borderRadius: effectiveStyle.borderRadius,
-          borderSide: BorderSide(color: effectiveStyle.borderColor),
+          borderRadius: borderRadius,
+          borderSide: BorderSide(color: borderColor),
         ),
         enabledBorder: OutlineInputBorder(
-          borderRadius: effectiveStyle.borderRadius,
+          borderRadius: borderRadius,
           borderSide: BorderSide(
-            color: hasError
-                ? effectiveStyle.errorBorderColor
-                : effectiveStyle.borderColor,
+            color: hasError ? errorBorderColor : borderColor,
           ),
         ),
         focusedBorder: OutlineInputBorder(
-          borderRadius: effectiveStyle.borderRadius,
+          borderRadius: borderRadius,
           borderSide: BorderSide(
-            color: hasError
-                ? effectiveStyle.errorBorderColor
-                : effectiveStyle.focusedBorderColor,
+            color: hasError ? errorBorderColor : focusedBorderColor,
             width: 2,
           ),
         ),
         errorBorder: OutlineInputBorder(
-          borderRadius: effectiveStyle.borderRadius,
-          borderSide: BorderSide(color: effectiveStyle.errorBorderColor),
+          borderRadius: borderRadius,
+          borderSide: BorderSide(color: errorBorderColor),
         ),
         focusedErrorBorder: OutlineInputBorder(
-          borderRadius: effectiveStyle.borderRadius,
+          borderRadius: borderRadius,
           borderSide: BorderSide(
-            color: effectiveStyle.errorBorderColor,
+            color: errorBorderColor,
             width: 2,
           ),
         ),
         disabledBorder: OutlineInputBorder(
-          borderRadius: effectiveStyle.borderRadius,
-          borderSide: BorderSide(color: effectiveStyle.disabledBorderColor),
+          borderRadius: borderRadius,
+          borderSide: BorderSide(color: disabledBorderColor),
         ),
       ),
       onChanged: (value) {

@@ -2,6 +2,7 @@
 library velocity_spinner;
 
 import 'package:flutter/material.dart';
+import '../../../core/utils/velocity_repaint_boundary.dart';
 import 'spinner_style.dart';
 
 export 'spinner_style.dart';
@@ -10,6 +11,9 @@ export 'spinner_style.dart';
 enum VelocitySpinnerType { circular, dots, wave, pulse, ring }
 
 /// VelocityUI 加载动画
+///
+/// 支持多种动画类型，包括圆形、点状、波浪、脉冲和环形动画。
+/// 默认使用 RepaintBoundary 包装以优化渲染性能。
 class VelocitySpinner extends StatefulWidget {
   const VelocitySpinner({
     super.key,
@@ -17,19 +21,35 @@ class VelocitySpinner extends StatefulWidget {
     this.size = 32,
     this.color,
     this.style,
+    this.useRepaintBoundary = true,
   });
 
+  /// 动画类型
   final VelocitySpinnerType type;
+
+  /// 动画尺寸
   final double size;
+
+  /// 动画颜色
   final Color? color;
+
+  /// 动画样式
   final VelocitySpinnerStyle? style;
+
+  /// 是否使用 RepaintBoundary 包装
+  ///
+  /// 默认为 true，用于隔离动画重绘区域，提升渲染性能。
+  /// 设置为 false 可禁用 RepaintBoundary。
+  final bool useRepaintBoundary;
 
   @override
   State<VelocitySpinner> createState() => _VelocitySpinnerState();
 }
 
 class _VelocitySpinnerState extends State<VelocitySpinner>
-    with TickerProviderStateMixin {
+    with TickerProviderStateMixin, VelocityAnimatedMixin<VelocitySpinner> {
+  @override
+  bool get useRepaintBoundary => widget.useRepaintBoundary;
   late AnimationController _controller;
 
   Color _applyOpacity(Color color, double opacity) {
@@ -60,17 +80,22 @@ class _VelocitySpinnerState extends State<VelocitySpinner>
     final effectiveStyle = widget.style ?? const VelocitySpinnerStyle();
     final color = widget.color ?? effectiveStyle.color;
 
+    Widget content;
     switch (widget.type) {
       case VelocitySpinnerType.dots:
-        return _buildDots(color);
+        content = _buildDots(color);
+        break;
       case VelocitySpinnerType.wave:
-        return _buildWave(color);
+        content = _buildWave(color);
+        break;
       case VelocitySpinnerType.pulse:
-        return _buildPulse(color);
+        content = _buildPulse(color);
+        break;
       case VelocitySpinnerType.ring:
-        return _buildRing(color);
+        content = _buildRing(color);
+        break;
       default:
-        return SizedBox(
+        content = SizedBox(
           width: widget.size,
           height: widget.size,
           child: CircularProgressIndicator(
@@ -78,6 +103,8 @@ class _VelocitySpinnerState extends State<VelocitySpinner>
               valueColor: AlwaysStoppedAnimation(color)),
         );
     }
+
+    return wrapWithRepaintBoundary(content);
   }
 
   Widget _buildDots(Color color) {

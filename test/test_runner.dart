@@ -28,6 +28,12 @@ class TestRunner {
     await _runCommand('flutter test test/widget/ --coverage');
   }
 
+  /// 运行属性测试
+  static Future<void> runPropertyTests() async {
+    print('🔬 运行属性测试...');
+    await _runCommand('flutter test test/property/ --coverage');
+  }
+
   /// 运行集成测试
   static Future<void> runIntegrationTests() async {
     print('🔗 运行集成测试...');
@@ -394,6 +400,7 @@ void main(List<String> args) async {
     print('  all - 运行所有测试');
     print('  unit - 运行单元测试');
     print('  widget - 运行组件测试');
+    print('  property - 运行属性测试');
     print('  integration - 运行集成测试');
     print('  golden - 运行截图测试');
     print('  performance - 运行性能测试');
@@ -413,6 +420,9 @@ void main(List<String> args) async {
       break;
     case 'widget':
       await TestRunner.runWidgetTests();
+      break;
+    case 'property':
+      await TestRunner.runPropertyTests();
       break;
     case 'integration':
       await TestRunner.runIntegrationTests();

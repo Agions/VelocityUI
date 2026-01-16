@@ -178,6 +178,57 @@ class VelocityThemeData {
     );
   }
 
+  /// 高效的相等性比较
+  @override
+  bool operator ==(Object other) {
+    if (identical(this, other)) return true;
+    if (other is! VelocityThemeData) return false;
+    return other.colorScheme == colorScheme &&
+        other.textTheme == textTheme &&
+        other.brightness == brightness &&
+        other.primaryColor == primaryColor &&
+        other.scaffoldBackgroundColor == scaffoldBackgroundColor &&
+        other.cardColor == cardColor &&
+        other.dividerColor == dividerColor &&
+        other.shadowColor == shadowColor &&
+        other.splashColor == splashColor &&
+        other.highlightColor == highlightColor &&
+        other.hoverColor == hoverColor &&
+        other.focusColor == focusColor &&
+        other.disabledColor == disabledColor &&
+        other.buttonTheme == buttonTheme &&
+        other.inputTheme == inputTheme &&
+        other.cardTheme == cardTheme &&
+        other.dialogTheme == dialogTheme &&
+        other.borderRadius == borderRadius &&
+        other.spacing == spacing &&
+        other.elevation == elevation;
+  }
+
+  @override
+  int get hashCode => Object.hash(
+        colorScheme,
+        textTheme,
+        brightness,
+        primaryColor,
+        scaffoldBackgroundColor,
+        cardColor,
+        dividerColor,
+        shadowColor,
+        splashColor,
+        highlightColor,
+        hoverColor,
+        focusColor,
+        disabledColor,
+        buttonTheme,
+        inputTheme,
+        cardTheme,
+        dialogTheme,
+        borderRadius,
+        spacing,
+        elevation,
+      );
+
   /// 复制并修改
   VelocityThemeData copyWith({
     VelocityColorScheme? colorScheme,
@@ -272,6 +323,49 @@ class VelocityButtonThemeData {
   final EdgeInsets? padding;
   final double? elevation;
   final TextStyle? textStyle;
+
+  /// 合并样式 - 支持 null 安全合并
+  VelocityButtonThemeData merge(VelocityButtonThemeData? other) {
+    if (other == null) return this;
+    return VelocityButtonThemeData(
+      backgroundColor: other.backgroundColor ?? backgroundColor,
+      foregroundColor: other.foregroundColor ?? foregroundColor,
+      disabledBackgroundColor:
+          other.disabledBackgroundColor ?? disabledBackgroundColor,
+      disabledForegroundColor:
+          other.disabledForegroundColor ?? disabledForegroundColor,
+      borderRadius: other.borderRadius ?? borderRadius,
+      padding: other.padding ?? padding,
+      elevation: other.elevation ?? elevation,
+      textStyle: other.textStyle ?? textStyle,
+    );
+  }
+
+  @override
+  bool operator ==(Object other) {
+    if (identical(this, other)) return true;
+    if (other is! VelocityButtonThemeData) return false;
+    return other.backgroundColor == backgroundColor &&
+        other.foregroundColor == foregroundColor &&
+        other.disabledBackgroundColor == disabledBackgroundColor &&
+        other.disabledForegroundColor == disabledForegroundColor &&
+        other.borderRadius == borderRadius &&
+        other.padding == padding &&
+        other.elevation == elevation &&
+        other.textStyle == textStyle;
+  }
+
+  @override
+  int get hashCode => Object.hash(
+        backgroundColor,
+        foregroundColor,
+        disabledBackgroundColor,
+        disabledForegroundColor,
+        borderRadius,
+        padding,
+        elevation,
+        textStyle,
+      );
 }
 
 /// 输入框主题数据
@@ -321,6 +415,47 @@ class VelocityInputThemeData {
   final Color? hintColor;
   final BorderRadius? borderRadius;
   final EdgeInsets? padding;
+
+  /// 合并样式 - 支持 null 安全合并
+  VelocityInputThemeData merge(VelocityInputThemeData? other) {
+    if (other == null) return this;
+    return VelocityInputThemeData(
+      fillColor: other.fillColor ?? fillColor,
+      borderColor: other.borderColor ?? borderColor,
+      focusedBorderColor: other.focusedBorderColor ?? focusedBorderColor,
+      errorBorderColor: other.errorBorderColor ?? errorBorderColor,
+      textColor: other.textColor ?? textColor,
+      hintColor: other.hintColor ?? hintColor,
+      borderRadius: other.borderRadius ?? borderRadius,
+      padding: other.padding ?? padding,
+    );
+  }
+
+  @override
+  bool operator ==(Object other) {
+    if (identical(this, other)) return true;
+    if (other is! VelocityInputThemeData) return false;
+    return other.fillColor == fillColor &&
+        other.borderColor == borderColor &&
+        other.focusedBorderColor == focusedBorderColor &&
+        other.errorBorderColor == errorBorderColor &&
+        other.textColor == textColor &&
+        other.hintColor == hintColor &&
+        other.borderRadius == borderRadius &&
+        other.padding == padding;
+  }
+
+  @override
+  int get hashCode => Object.hash(
+        fillColor,
+        borderColor,
+        focusedBorderColor,
+        errorBorderColor,
+        textColor,
+        hintColor,
+        borderRadius,
+        padding,
+      );
 }
 
 /// 卡片主题数据
@@ -362,6 +497,41 @@ class VelocityCardThemeData {
   final BorderRadius? borderRadius;
   final EdgeInsets? padding;
   final double? elevation;
+
+  /// 合并样式 - 支持 null 安全合并
+  VelocityCardThemeData merge(VelocityCardThemeData? other) {
+    if (other == null) return this;
+    return VelocityCardThemeData(
+      backgroundColor: other.backgroundColor ?? backgroundColor,
+      borderColor: other.borderColor ?? borderColor,
+      shadowColor: other.shadowColor ?? shadowColor,
+      borderRadius: other.borderRadius ?? borderRadius,
+      padding: other.padding ?? padding,
+      elevation: other.elevation ?? elevation,
+    );
+  }
+
+  @override
+  bool operator ==(Object other) {
+    if (identical(this, other)) return true;
+    if (other is! VelocityCardThemeData) return false;
+    return other.backgroundColor == backgroundColor &&
+        other.borderColor == borderColor &&
+        other.shadowColor == shadowColor &&
+        other.borderRadius == borderRadius &&
+        other.padding == padding &&
+        other.elevation == elevation;
+  }
+
+  @override
+  int get hashCode => Object.hash(
+        backgroundColor,
+        borderColor,
+        shadowColor,
+        borderRadius,
+        padding,
+        elevation,
+      );
 }
 
 /// 对话框主题数据
@@ -403,6 +573,41 @@ class VelocityDialogThemeData {
   final BorderRadius? borderRadius;
   final EdgeInsets? padding;
   final double? elevation;
+
+  /// 合并样式 - 支持 null 安全合并
+  VelocityDialogThemeData merge(VelocityDialogThemeData? other) {
+    if (other == null) return this;
+    return VelocityDialogThemeData(
+      backgroundColor: other.backgroundColor ?? backgroundColor,
+      titleColor: other.titleColor ?? titleColor,
+      contentColor: other.contentColor ?? contentColor,
+      borderRadius: other.borderRadius ?? borderRadius,
+      padding: other.padding ?? padding,
+      elevation: other.elevation ?? elevation,
+    );
+  }
+
+  @override
+  bool operator ==(Object other) {
+    if (identical(this, other)) return true;
+    if (other is! VelocityDialogThemeData) return false;
+    return other.backgroundColor == backgroundColor &&
+        other.titleColor == titleColor &&
+        other.contentColor == contentColor &&
+        other.borderRadius == borderRadius &&
+        other.padding == padding &&
+        other.elevation == elevation;
+  }
+
+  @override
+  int get hashCode => Object.hash(
+        backgroundColor,
+        titleColor,
+        contentColor,
+        borderRadius,
+        padding,
+        elevation,
+      );
 }
 
 /// 圆角配置
@@ -424,6 +629,22 @@ class VelocityBorderRadiusData {
   final double xl;
   final double xxl;
   final double full;
+
+  @override
+  bool operator ==(Object other) {
+    if (identical(this, other)) return true;
+    if (other is! VelocityBorderRadiusData) return false;
+    return other.none == none &&
+        other.sm == sm &&
+        other.md == md &&
+        other.lg == lg &&
+        other.xl == xl &&
+        other.xxl == xxl &&
+        other.full == full;
+  }
+
+  @override
+  int get hashCode => Object.hash(none, sm, md, lg, xl, xxl, full);
 }
 
 /// 间距配置
@@ -445,6 +666,22 @@ class VelocitySpacingData {
   final double lg;
   final double xl;
   final double xxl;
+
+  @override
+  bool operator ==(Object other) {
+    if (identical(this, other)) return true;
+    if (other is! VelocitySpacingData) return false;
+    return other.none == none &&
+        other.xs == xs &&
+        other.sm == sm &&
+        other.md == md &&
+        other.lg == lg &&
+        other.xl == xl &&
+        other.xxl == xxl;
+  }
+
+  @override
+  int get hashCode => Object.hash(none, xs, sm, md, lg, xl, xxl);
 }
 
 /// 阴影配置
@@ -464,4 +701,19 @@ class VelocityElevationData {
   final double lg;
   final double xl;
   final double xxl;
+
+  @override
+  bool operator ==(Object other) {
+    if (identical(this, other)) return true;
+    if (other is! VelocityElevationData) return false;
+    return other.none == none &&
+        other.sm == sm &&
+        other.md == md &&
+        other.lg == lg &&
+        other.xl == xl &&
+        other.xxl == xxl;
+  }
+
+  @override
+  int get hashCode => Object.hash(none, sm, md, lg, xl, xxl);
 }

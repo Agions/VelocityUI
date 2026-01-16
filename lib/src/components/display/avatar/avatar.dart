@@ -2,11 +2,13 @@
 library velocity_avatar;
 
 import 'package:flutter/material.dart';
+import '../../../core/types/component_size.dart';
 import 'avatar_style.dart';
 
 export 'avatar_style.dart';
 
-/// 头像尺寸
+/// 头像尺寸（已弃用，请使用 VelocitySize 或 VelocityExtendedSize）
+@Deprecated('Use VelocitySize or VelocityExtendedSize instead')
 enum VelocityAvatarSize { xs, sm, md, lg, xl }
 
 /// 头像形状
@@ -15,17 +17,35 @@ enum VelocityAvatarShape { circle, square, rounded }
 /// VelocityUI 头像组件
 class VelocityAvatar extends StatelessWidget {
   /// 创建头像组件
+  ///
+  /// 使用统一的 [VelocitySize] 尺寸枚举。
   const VelocityAvatar({
     super.key,
     this.imageUrl,
     this.name,
     this.icon,
-    this.size = VelocityAvatarSize.md,
+    this.size = VelocitySize.medium,
     this.shape = VelocityAvatarShape.circle,
     this.customSize,
     this.style,
     this.onTap,
-  });
+  }) : _legacySize = null;
+
+  /// 创建头像组件（使用扩展尺寸）
+  ///
+  /// 使用 [VelocityExtendedSize] 提供更细粒度的尺寸控制。
+  const VelocityAvatar.extended({
+    super.key,
+    this.imageUrl,
+    this.name,
+    this.icon,
+    VelocityExtendedSize extendedSize = VelocityExtendedSize.medium,
+    this.shape = VelocityAvatarShape.circle,
+    this.customSize,
+    this.style,
+    this.onTap,
+  })  : size = VelocitySize.medium,
+        _legacySize = extendedSize;
 
   /// 图片地址
   final String? imageUrl;
@@ -36,8 +56,11 @@ class VelocityAvatar extends StatelessWidget {
   /// 自定义图标
   final IconData? icon;
 
-  /// 尺寸
-  final VelocityAvatarSize size;
+  /// 尺寸（使用统一的 VelocitySize）
+  final VelocitySize size;
+
+  /// 扩展尺寸（内部使用）
+  final VelocityExtendedSize? _legacySize;
 
   /// 形状
   final VelocityAvatarShape shape;
@@ -53,47 +76,86 @@ class VelocityAvatar extends StatelessWidget {
 
   double get _size {
     if (customSize != null) return customSize!;
+
+    // 如果使用扩展尺寸
+    final legacySize = _legacySize;
+    if (legacySize != null) {
+      switch (legacySize) {
+        case VelocityExtendedSize.xs:
+          return 24;
+        case VelocityExtendedSize.small:
+          return 32;
+        case VelocityExtendedSize.medium:
+          return 40;
+        case VelocityExtendedSize.large:
+          return 48;
+        case VelocityExtendedSize.xl:
+          return 64;
+      }
+    }
+
+    // 使用统一尺寸
     switch (size) {
-      case VelocityAvatarSize.xs:
-        return 24;
-      case VelocityAvatarSize.sm:
+      case VelocitySize.small:
         return 32;
-      case VelocityAvatarSize.md:
+      case VelocitySize.medium:
         return 40;
-      case VelocityAvatarSize.lg:
+      case VelocitySize.large:
         return 48;
-      case VelocityAvatarSize.xl:
-        return 64;
     }
   }
 
   double get _fontSize {
+    final legacySize = _legacySize;
+    if (legacySize != null) {
+      switch (legacySize) {
+        case VelocityExtendedSize.xs:
+          return 10;
+        case VelocityExtendedSize.small:
+          return 12;
+        case VelocityExtendedSize.medium:
+          return 14;
+        case VelocityExtendedSize.large:
+          return 18;
+        case VelocityExtendedSize.xl:
+          return 24;
+      }
+    }
+
     switch (size) {
-      case VelocityAvatarSize.xs:
-        return 10;
-      case VelocityAvatarSize.sm:
+      case VelocitySize.small:
         return 12;
-      case VelocityAvatarSize.md:
+      case VelocitySize.medium:
         return 14;
-      case VelocityAvatarSize.lg:
+      case VelocitySize.large:
         return 18;
-      case VelocityAvatarSize.xl:
-        return 24;
     }
   }
 
   double get _iconSize {
+    final legacySize = _legacySize;
+    if (legacySize != null) {
+      switch (legacySize) {
+        case VelocityExtendedSize.xs:
+          return 14;
+        case VelocityExtendedSize.small:
+          return 16;
+        case VelocityExtendedSize.medium:
+          return 20;
+        case VelocityExtendedSize.large:
+          return 24;
+        case VelocityExtendedSize.xl:
+          return 32;
+      }
+    }
+
     switch (size) {
-      case VelocityAvatarSize.xs:
-        return 14;
-      case VelocityAvatarSize.sm:
+      case VelocitySize.small:
         return 16;
-      case VelocityAvatarSize.md:
+      case VelocitySize.medium:
         return 20;
-      case VelocityAvatarSize.lg:
+      case VelocitySize.large:
         return 24;
-      case VelocityAvatarSize.xl:
-        return 32;
     }
   }
 
@@ -185,9 +247,10 @@ class VelocityAvatar extends StatelessWidget {
 class VelocityAvatarGroup extends StatelessWidget {
   /// 创建头像组
   const VelocityAvatarGroup({
-    required this.avatars, super.key,
+    required this.avatars,
+    super.key,
     this.max = 5,
-    this.size = VelocityAvatarSize.md,
+    this.size = VelocitySize.medium,
     this.overlap = 8,
     this.style,
   });
@@ -199,7 +262,7 @@ class VelocityAvatarGroup extends StatelessWidget {
   final int max;
 
   /// 尺寸
-  final VelocityAvatarSize size;
+  final VelocitySize size;
 
   /// 重叠距离
   final double overlap;

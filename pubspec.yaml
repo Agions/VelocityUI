@@ -1,6 +1,6 @@
 name: velocity_ui
 description: A high-performance, modern Flutter UI component library with clean architecture and comprehensive theming support.
-version: 1.0.3
+version: 1.0.4
 homepage: https://github.com/agions/velocity-ui
 repository: https://github.com/agions/velocity-ui
 issue_tracker: https://github.com/agions/velocity-ui/issues
@@ -26,7 +26,7 @@ dev_dependencies:
     sdk: flutter
   flutter_lints: ^3.0.0
   args: ^2.4.2
-
+  glados: ^1.1.7
   path: any
 flutter:
   uses-material-design: true

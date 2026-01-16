@@ -71,7 +71,7 @@ CODE_OF_CONDUCT.md       # 行为准则
 
 - 使用 `dart format` 格式化代码
 - 遵循 [Effective Dart](https://dart.dev/guides/language/effective-dart) 指南
-- 参考 [组件开发规范](doc/guides/component-development-standards.md)
+- 参考项目文档中的组件开发规范
 
 ### 命名规范
 
@@ -124,7 +124,7 @@ feat(button): 添加新的按钮变体
 - 添加 ghost 变体
 - 更新文档和示例
 
-```
+````
 
 ## 开发流程
 
@@ -132,19 +132,17 @@ feat(button): 添加新的按钮变体
 
 在开始开发之前，请先创建一个 Issue 描述你要解决的问题或要实现的功能。
 
-### 2. 创建分支
-
 基于 `main` 分支创建新分支：
 
 ```bash
 git checkout -b feature/your-feature-name
 # 或
 git checkout -b fix/your-bug-fix
-```
+````
 
 ### 3. 开发
 
-- 遵循[组件开发规范](doc/VelocityUI_Component_Development_Standards.md)
+- 遵循项目文档中的组件开发规范
 - 编写相应的测试
 - 更新相关文档
 - 确保所有测试通过

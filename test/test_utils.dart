@@ -243,39 +243,66 @@ class PerformanceTest {
   }
 }
 
-/// 无障碍测试工具
-class AccessibilityTest {
-  /// 验证Widget是否有语义标签
-  static void hasSemanticsLabel(
-      WidgetTester tester, Finder finder, String label) {
-    final semantics = tester.widget<Semantics>(finder);
-    expect(semantics.properties.label, contains(label));
-  }
+/// Property-based testing utilities
+///
+/// Provides generators and utilities for property-based testing with glados
+class PropertyTestUtils {
+  /// Default number of iterations for property tests
+  static const int defaultIterations = 100;
 
-  /// 验证Widget是否可点击
-  static void isTapTarget(WidgetTester tester, Finder finder) {
-    final gestureDetector = tester.widget<GestureDetector>(finder);
-    expect(gestureDetector.onTap, isNotNull);
-  }
-
-  /// 验证Widget是否有足够的触摸目标尺寸
-  static void hasMinimumTouchTarget(WidgetTester tester, Finder finder) {
-    final size = tester.getSize(finder);
-    expect(size.width, greaterThanOrEqualTo(44));
-    expect(size.height, greaterThanOrEqualTo(44));
-  }
-
-  /// 验证文本对比度
-  static void hasTextContrast(WidgetTester tester, Finder finder) {
-    final text = tester.widget<Text>(finder);
-    final style = text.style ?? const TextStyle();
-    final color = style.color ?? Colors.black;
-
-    // 简单的对比度检查
-    if (color.computeLuminance() > 0.5) {
-      expect(color.computeLuminance(), greaterThan(0.7));
-    } else {
-      expect(color.computeLuminance(), lessThan(0.3));
+  /// Verify that a property holds for all generated inputs
+  static void verifyProperty<T>(
+    String description,
+    T Function() generator,
+    bool Function(T) property, {
+    int iterations = defaultIterations,
+  }) {
+    for (var i = 0; i < iterations; i++) {
+      final input = generator();
+      final result = property(input);
+      if (!result) {
+        throw TestFailure(
+          'Property "$description" failed for input: $input (iteration $i)',
+        );
+      }
     }
+  }
+
+  /// Generate a random size enum value
+  static T randomEnumValue<T>(List<T> values) {
+    return values[DateTime.now().millisecond % values.length];
+  }
+}
+
+/// Custom generators for VelocityUI types
+class VelocityGenerators {
+  /// Generate a random EdgeInsets
+  static EdgeInsets randomEdgeInsets() {
+    final value = TestData.randomNumber(0, 32).toDouble();
+    return EdgeInsets.all(value);
+  }
+
+  /// Generate a random BorderRadius
+  static BorderRadius randomBorderRadius() {
+    final value = TestData.randomNumber(0, 24).toDouble();
+    return BorderRadius.circular(value);
+  }
+
+  /// Generate a random Duration
+  static Duration randomDuration() {
+    return Duration(milliseconds: TestData.randomNumber(100, 500));
+  }
+
+  /// Generate a random BoxShadow
+  static BoxShadow randomBoxShadow() {
+    final color = TestData.randomColor();
+    return BoxShadow(
+      color: color.withValues(alpha: 0.2),
+      blurRadius: TestData.randomNumber(0, 16).toDouble(),
+      offset: Offset(
+        TestData.randomNumber(-4, 4).toDouble(),
+        TestData.randomNumber(-4, 4).toDouble(),
+      ),
+    );
   }
 }

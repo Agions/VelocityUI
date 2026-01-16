@@ -2,35 +2,63 @@
 library velocity_carousel;
 
 import 'package:flutter/material.dart';
+import '../../../core/utils/velocity_repaint_boundary.dart';
 import 'carousel_style.dart';
 
 export 'carousel_style.dart';
 
 /// VelocityUI 轮播图
+///
+/// 支持自动播放、指示器显示等功能。
+/// 默认使用 RepaintBoundary 包装以优化渲染性能。
 class VelocityCarousel extends StatefulWidget {
   const VelocityCarousel({
-    required this.items, super.key,
+    required this.items,
+    super.key,
     this.height = 200,
     this.autoPlay = true,
     this.autoPlayInterval = const Duration(seconds: 3),
     this.showIndicator = true,
     this.onPageChanged,
     this.style,
+    this.useRepaintBoundary = true,
   });
 
+  /// 轮播项列表
   final List<Widget> items;
+
+  /// 轮播图高度
   final double height;
+
+  /// 是否自动播放
   final bool autoPlay;
+
+  /// 自动播放间隔
   final Duration autoPlayInterval;
+
+  /// 是否显示指示器
   final bool showIndicator;
+
+  /// 页面切换回调
   final ValueChanged<int>? onPageChanged;
+
+  /// 轮播图样式
   final VelocityCarouselStyle? style;
+
+  /// 是否使用 RepaintBoundary 包装
+  ///
+  /// 默认为 true，用于隔离动画重绘区域，提升渲染性能。
+  /// 设置为 false 可禁用 RepaintBoundary。
+  final bool useRepaintBoundary;
 
   @override
   State<VelocityCarousel> createState() => _VelocityCarouselState();
 }
 
-class _VelocityCarouselState extends State<VelocityCarousel> {
+class _VelocityCarouselState extends State<VelocityCarousel>
+    with VelocityAnimatedMixin<VelocityCarousel> {
+  @override
+  bool get useRepaintBoundary => widget.useRepaintBoundary;
   late PageController _controller;
   int _currentPage = 0;
 
@@ -63,7 +91,7 @@ class _VelocityCarouselState extends State<VelocityCarousel> {
   Widget build(BuildContext context) {
     final effectiveStyle = widget.style ?? const VelocityCarouselStyle();
 
-    return SizedBox(
+    final content = SizedBox(
       height: widget.height,
       child: Stack(
         children: [
@@ -111,5 +139,7 @@ class _VelocityCarouselState extends State<VelocityCarousel> {
         ],
       ),
     );
+
+    return wrapWithRepaintBoundary(content);
   }
 }
